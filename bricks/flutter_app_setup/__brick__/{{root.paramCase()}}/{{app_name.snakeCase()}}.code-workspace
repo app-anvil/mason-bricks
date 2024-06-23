@@ -1,0 +1,16 @@
+{
+  "folders": [
+    {
+      "name": "/",
+      "path": "."
+    },
+    {
+      "name": "/app",
+      "path": "app"
+    },
+    {
+      "name": "/packages",
+      "path": "packages"
+    }
+  ]
+}

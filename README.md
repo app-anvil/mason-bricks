@@ -48,3 +48,7 @@ mason add <BRICK_NAME> --git-url https://github.com/marcossevilla/bricks --git-p
 *Note: Be sure to replace `<BRICK_NAME>` with one of the following bricks:*
 
 ## Available bricks 🧱
+
+| Brick Name            | Description                                              |
+| --------------------- | -------------------------------------------------------- |
+| flutter_app_setup             | Generate a Flutter app and setup it.                     |
