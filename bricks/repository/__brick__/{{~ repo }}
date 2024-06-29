@@ -1,0 +1,4 @@
+typedef {{entity.pascalCase()}}Id = String;
+
+abstract interface class {{name.pascalCase()}}Repository
+    extends Repository<{{entity.pascalCase()}}Id, {{entity.pascalCase()}}Entity, {{name.pascalCase()}}RepositoryState> {}

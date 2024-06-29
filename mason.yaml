@@ -1,3 +1,5 @@
 bricks:
   flutter_app_setup:
     path: ./bricks/flutter_app_setup
+  repository:
+    path: ./bricks/repository 
