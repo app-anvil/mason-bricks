@@ -1,0 +1,8 @@
+class {{entity.pascalCase()}}Model extends {{entity.pascalCase()}}Entity with ModelToStringMixin {
+
+  @override
+  {{entity.pascalCase()}}Model copyWith() {
+    // TODO: implement copyWith
+    throw UnimplementedError();
+  }
+}

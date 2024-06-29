@@ -1,0 +1,4 @@
+abstract interface class {{entity.pascalCase()}}Entity extends Entity {
+
+  {{entity.pascalCase()}}Entity copyWith();
+}

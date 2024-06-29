@@ -1,0 +1,2 @@
+abstract interface class {{name.pascalCase()}}Repository
+    extends BaseRepository<{{entity.pascalCase()}}Entity, {{name.pascalCase()}}RepositoryState> {}

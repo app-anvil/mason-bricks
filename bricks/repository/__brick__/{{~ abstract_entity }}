@@ -1,0 +1,8 @@
+abstract class {{entity.pascalCase()}}Entity extends Entity {
+
+  {{entity.pascalCase()}}Entity copyWith();
+  
+  @override
+  List<Object?> get props => [
+      ];
+}

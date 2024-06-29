@@ -14,6 +14,26 @@ class Dart {
     }
   }
 
+  /// Formats code (`dart format`).
+  static Future<void> format({
+    required Logger logger,
+    String cwd = '.',
+    bool recursive = false,
+    Set<String> ignore = const {},
+  }) async {
+    if (!recursive) {
+      final pubspec = File(p.join(cwd, 'pubspec.yaml'));
+      if (!pubspec.existsSync()) throw PubspecNotFound();
+
+      await _Cmd.run(
+        'dart',
+        ['format', '.'],
+        logger: logger,
+      );
+      return;
+    }
+  }
+
   /// Apply all fixes (`dart fix --apply`).
   static Future<void> applyFixes({
     required Logger logger,
