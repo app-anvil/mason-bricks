@@ -1,5 +1,6 @@
 abstract class {{entity.pascalCase()}}Entity extends Entity {
-
+  const {{entity.pascalCase()}}Entity();
+  
   {{entity.pascalCase()}}Entity copyWith();
   
   @override
