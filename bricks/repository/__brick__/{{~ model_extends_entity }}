@@ -1,4 +1,4 @@
-class {{entity.pascalCase()}}Model extends {{entity.pascalCase()}}Entity with ModelToStringMixin {
+class {{entity.pascalCase()}}Model extends {{entity.pascalCase()}}Entity {
 
   @override
   {{entity.pascalCase()}}Model copyWith() {

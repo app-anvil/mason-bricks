@@ -1,2 +1,7 @@
 abstract interface class {{name.pascalCase()}}Repository
-    extends SingletonRepository<{{entity.pascalCase()}}Entity, {{name.pascalCase()}}RepositoryState> {}
+    extends SingletonRepository<{{entity.pascalCase()}}Entity, {{name.pascalCase()}}RepositoryState> {
+    /// Creates a new instance of [{{name.pascalCase()}}Repository] that uses an in-memory data
+    /// source.
+    factory {{name.pascalCase()}}Repository({{name.pascalCase()}}DataSource dataSource) =>
+        _{{name.pascalCase()}}RepositoryImpl(dataSource);
+}

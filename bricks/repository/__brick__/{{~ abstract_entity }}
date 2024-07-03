@@ -1,4 +1,4 @@
-abstract class {{entity.pascalCase()}}Entity extends Entity {
+abstract class {{entity.pascalCase()}}Entity {
   const {{entity.pascalCase()}}Entity();
   
   {{entity.pascalCase()}}Entity copyWith();
