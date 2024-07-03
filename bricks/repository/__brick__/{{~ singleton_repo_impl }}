@@ -1,0 +1,7 @@
+class _{{name.pascalCase()}}RepositoryImpl
+    extends SingletonRepository<{{entity.pascalCase()}}Entity, {{name.pascalCase()}}RepositoryState>
+    implements {{name.pascalCase()}}Repository {
+  final {{name.pascalCase()}}DataSource dataSource;
+
+  _{{name.pascalCase()}}RepositoryImpl(this.dataSource);
+}

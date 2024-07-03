@@ -1,3 +1,1 @@
-abstract class {{name.pascalCase()}}DataSource {
-
-}
+abstract interface class {{name.pascalCase()}}DataSource {}
