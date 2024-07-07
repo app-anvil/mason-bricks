@@ -1,3 +1,8 @@
+# 1.0.4
+
+Upgrades mason version
+Add `Equatable` to `Entity`
+
 # 1.0.3
 
 Rename in memory class and file name.
