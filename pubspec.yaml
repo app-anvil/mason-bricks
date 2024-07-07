@@ -9,7 +9,7 @@ dependencies:
   a2f_sdk:
     git:
       url: git@github.com:app-anvil/a2f_sdk.git
-      ref: 2.2.1
+      ref: 2.3.0
   glob: ^2.1.2 
   mason: 0.1.0-dev.57
   mason_logger: ^0.2.2
