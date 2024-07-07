@@ -9,11 +9,11 @@ class Mock{{entity.pascalCase()}} extends Mock implements {{entity.pascalCase()}
 
 void main() {
   late Mock{{name.pascalCase()}}DataSource mock{{name.pascalCase()}}DataSource;
-  late {{name.pascalCase()}}RepositoryImpl repo;
+  late {{name.pascalCase()}}Repository repo;
 
   setUp(() {
     mock{{name.pascalCase()}}DataSource = Mock{{name.pascalCase()}}DataSource();
-    repo = {{name.pascalCase()}}RepositoryImpl(mock{{name.pascalCase()}}DataSource);
+    repo = {{name.pascalCase()}}Repository(mock{{name.pascalCase()}}DataSource);
 
     registerFallbackValue(Mock{{entity.pascalCase()}}());
   });

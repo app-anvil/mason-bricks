@@ -1,3 +1,11 @@
+# 1.0.3
+
+Rename in memory class and file name.
+Refactor in memory data source class.
+Removes entity id typedef.
+Removes unused sdk from entity class.
+Uses the abstract constructor of the repository in repo test file.
+
 # 1.0.2
 
 Refactor repository 

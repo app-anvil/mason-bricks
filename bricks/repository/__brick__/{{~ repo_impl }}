@@ -1,5 +1,5 @@
 class _{{name.pascalCase()}}RepositoryImpl
-    extends Repository<{{entity.pascalCase()}}Id, {{entity.pascalCase()}}Entity, {{name.pascalCase()}}RepositoryState>
+    extends Repository<String, {{entity.pascalCase()}}Entity, {{name.pascalCase()}}RepositoryState>
     implements {{name.pascalCase()}}Repository {
   final {{name.pascalCase()}}DataSource dataSource;
 
