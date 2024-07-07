@@ -1,4 +1,6 @@
-abstract class {{entity.pascalCase()}}Entity {
+import 'package:a2f_sdk/a2f_sdk.dart';
+
+abstract class {{entity.pascalCase()}}Entity extends Equatable {
   const {{entity.pascalCase()}}Entity();
   
   {{entity.pascalCase()}}Entity copyWith();
