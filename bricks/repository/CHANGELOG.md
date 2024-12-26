@@ -1,3 +1,7 @@
+# 1.0.5
+
+- Generate `test` folder in the proper location.
+
 # 1.0.4
 
 Upgrades mason version
@@ -13,7 +17,7 @@ Uses the abstract constructor of the repository in repo test file.
 
 # 1.0.2
 
-Refactor repository 
+Refactor repository
 
 # 1.0.1
 

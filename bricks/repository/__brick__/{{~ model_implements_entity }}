@@ -1,8 +1,24 @@
+import 'package:a2f_sdk/a2f_sdk.dart';
+
+import '../../domain/domain.dart';
+
 class {{entity.pascalCase()}}Model extends Model implements {{entity.pascalCase()}}Entity {
 
   @override
-  {{entity.pascalCase()}}Model copyWith() {
-    // TODO: implement copyWith
-    throw UnimplementedError();
-  }
+  final String id;
+
+  const {{entity.pascalCase()}}Model({
+    required this.id,
+  });
+
+  @override
+  {{entity.pascalCase()}}Model copyWith() =>  throw UnimplementedError();
+
+  @override
+  Map<String, dynamic> $toMap() => {
+    'id': id,
+  };
+  
+  @override
+  List<Object?> get props => [id];
 }

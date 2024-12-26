@@ -8,7 +8,7 @@ description: A new brick created with the Mason CLI.
 # The following defines the version and build number for your brick.
 # A version number is three numbers separated by dots, like 1.2.34
 # followed by an optional build number (separated by a +).
-version: 1.0.4
+version: 1.0.5
 
 # The following defines the environment for the current brick.
 # It includes the version of mason that the brick requires.
@@ -29,25 +29,25 @@ vars:
   name:
     type: string
     description: The name of the repository
-    prompt: What is the name of the repository?
+    prompt: What is the name of the repository (<repo_name>_repository)?
   entity:
     type: string
     description: The name of the entity
-    prompt: What is the name of the entity handled by the repository?
+    prompt: What is the name of the entity handled by the repository (snake case)?
   entity_is:
     type: enum
     default: abstract
     description: Indicates what kind of entity should be created
     prompt: What kind of entity do you want to create?
-    values: 
-      - abstract 
+    values:
+      - abstract
       - interface
   repository_type:
     type: enum
     default: repository
     description: The type of repository
     prompt: What kind of repository do you want to create?
-    values: 
+    values:
       - base_repository
-      - repository 
-      - singleton_repository        
+      - repository
+      - singleton_repository

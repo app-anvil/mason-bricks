@@ -6,6 +6,5 @@ abstract class {{entity.pascalCase()}}Entity extends Equatable {
   {{entity.pascalCase()}}Entity copyWith();
   
   @override
-  List<Object?> get props => [
-      ];
+  List<Object?> get props => throw UnimplementedError();
 }

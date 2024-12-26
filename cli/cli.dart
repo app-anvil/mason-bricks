@@ -8,7 +8,7 @@ part 'dart_cli.dart';
 
 part 'very_good_cli.dart';
 
-/// Thown when `flutter pub get` is executed without a `pubspec.yaml`.
+/// Thrown when `flutter pub get` is executed without a `pubspec.yaml`.
 class PubspecNotFound implements Exception {}
 
 /// Class for running commands via command line.

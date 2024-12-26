@@ -1,8 +1,9 @@
+import 'package:a2f_sdk/a2f_sdk.dart';
+
+import '../../domain/domain.dart';
+
 class {{entity.pascalCase()}}Model extends {{entity.pascalCase()}}Entity {
 
   @override
-  {{entity.pascalCase()}}Model copyWith() {
-    // TODO: implement copyWith
-    throw UnimplementedError();
-  }
+  {{entity.pascalCase()}}Model copyWith() => throw UnimplementedError();
 }

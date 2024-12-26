@@ -1,6 +1,8 @@
-import 'package:a2f_sdk/a2f_sdk.dart';
+import 'package:equatable/equatable.dart';
 
 abstract interface class {{entity.pascalCase()}}Entity extends Equatable {
+  /// The unique identifier of the {{entity.pascalCase()}}.
+  String get id;
 
   {{entity.pascalCase()}}Entity copyWith();
 }
