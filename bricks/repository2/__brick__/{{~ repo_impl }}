@@ -6,22 +6,31 @@ class _{{name.pascalCase()}}RepositoryImpl
   _{{name.pascalCase()}}RepositoryImpl(this._dataSource);
 
   @override
-  Future<void> create(Create{{entity.pascalCase()}}Input input) {
+  Future<{{entity.pascalCase()}}Entity> create(Create{{entity.pascalCase()}}Input input) async {
+    final created = await _dataSource.create(input);
+    cache.save(created.id, created);
+    emit({{name.pascalCase()}}Repository{{name.pascalCase()}}Added(created));
+    return created;
+  }
+
+  @override
+  Future<List<{{entity.pascalCase()}}Entity>> fetchMany() {
     throw UnimplementedError();
   }
 
   @override
-  Future<List<{{entity.pascalCase()}}Entity>> readAll() {
-    throw UnimplementedError();
+  Future<{{entity.pascalCase()}}Entity> fetchOne(String id) async {
+    final item = await _dataSource.read(id);
+    cache.save(item.id, item);
+    emit({{name.pascalCase()}}Repository{{name.pascalCase()}}Fetched(item));
+    return item;
   }
 
   @override
-  Future<{{entity.pascalCase()}}Entity> readOneById(String id) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> delete(String id) {
-    throw UnimplementedError();
+  Future<void> delete(String id) async {
+    await _dataSource.delete(id);
+    final deletedItem = cache.getOrThrow(id);
+    cache.delete(id);
+    emit({{name.pascalCase()}}Repository{{name.pascalCase()}}Deleted(deletedItem));
   }
 }

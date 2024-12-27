@@ -8,12 +8,12 @@ abstract interface class {{name.pascalCase()}}Repository
   /// Creates a new {{entity.pascalCase()}}.
   Future<void> create(Create{{entity.pascalCase()}}Input input);
 
-  /// Reads all {{entity.snakeCase()}}.
-  Future<List<{{entity.pascalCase()}}Entity>> readAll();
+  /// Fetches all {{entity.snakeCase()}}.
+  Future<List<{{entity.pascalCase()}}Entity>> fetchMany();
 
-  /// Reads a {{entity.snakeCase()}} by its [id].
-  Future<{{entity.pascalCase()}}Entity> readOneById(String id);
+  /// Fetches a {{entity.snakeCase()}} by its [id].
+  Future<{{entity.pascalCase()}}Entity> fetchOne(String id);
 
-  /// Updates a {{entity.snakeCase()}} by its [id].
+  /// Deletes a {{entity.snakeCase()}} by its [id].
   Future<void> delete(String id);
 }

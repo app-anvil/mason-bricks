@@ -1,0 +1,10 @@
+part of 'repository2_v2_1_0_repository.dart';
+
+typedef Repository2V210RepositoryState = RepositoryState<Repository2V210Entity>;
+
+typedef Repository2V210RepositoryRepository2V210Added = RepositoryItemAdded<Repository2V210Entity>;
+typedef Repository2V210RepositoryRepository2V210CollectionFetched
+    = RepositoryCollectionFetched<Repository2V210Entity>;
+typedef Repository2V210RepositoryRepository2V210Fetched = RepositoryItemFetched<Repository2V210Entity>;
+typedef Repository2V210RepositoryRepository2V210Updated = RepositoryItemUpdated<Repository2V210Entity>;
+typedef Repository2V210RepositoryRepository2V210Deleted = RepositoryItemDeleted<Repository2V210Entity>;
