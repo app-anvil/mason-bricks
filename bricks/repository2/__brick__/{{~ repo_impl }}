@@ -1,0 +1,27 @@
+class _{{name.pascalCase()}}RepositoryImpl
+    extends Repository<String, {{entity.pascalCase()}}Entity, {{name.pascalCase()}}RepositoryState>
+    implements {{name.pascalCase()}}Repository {
+  final {{name.pascalCase()}}DataSource _dataSource;
+
+  _{{name.pascalCase()}}RepositoryImpl(this._dataSource);
+
+  @override
+  Future<void> create(Create{{entity.pascalCase()}}Input input) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<{{entity.pascalCase()}}Entity>> readAll() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<{{entity.pascalCase()}}Entity> readOneById(String id) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> delete(String id) {
+    throw UnimplementedError();
+  }
+}

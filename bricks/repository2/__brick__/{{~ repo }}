@@ -1,0 +1,19 @@
+abstract interface class {{name.pascalCase()}}Repository
+    extends Repository<String, {{entity.pascalCase()}}Entity, {{name.pascalCase()}}RepositoryState> {
+  /// Creates a new instance of [{{name.pascalCase()}}Repository] that uses the provided data
+  /// source.
+  factory {{name.pascalCase()}}Repository({{name.pascalCase()}}DataSource dataSource) =>
+      _{{name.pascalCase()}}RepositoryImpl(dataSource);
+
+  /// Creates a new {{entity.pascalCase()}}.
+  Future<void> create(Create{{entity.pascalCase()}}Input input);
+
+  /// Reads all {{entity.snakeCase()}}.
+  Future<List<{{entity.pascalCase()}}Entity>> readAll();
+
+  /// Reads a {{entity.snakeCase()}} by its [id].
+  Future<{{entity.pascalCase()}}Entity> readOneById(String id);
+
+  /// Updates a {{entity.snakeCase()}} by its [id].
+  Future<void> delete(String id);
+}

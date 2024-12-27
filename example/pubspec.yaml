@@ -15,7 +15,7 @@ dependencies:
   a2f_sdk:
     git:
       url: git@github.com:app-anvil/a2f_sdk.git
-      ref: main
+      ref: 5.3.0
 
 dev_dependencies:
   flutter_test:

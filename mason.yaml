@@ -3,3 +3,5 @@ bricks:
     path: ./bricks/flutter_app_setup
   repository:
     path: ./bricks/repository 
+  repository2:
+    path: ./bricks/repository2
