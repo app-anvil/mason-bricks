@@ -6,7 +6,7 @@ abstract interface class {{name.pascalCase()}}Repository
       _{{name.pascalCase()}}RepositoryImpl(dataSource);
 
   /// Creates a new {{entity.pascalCase()}}.
-  Future<void> create(Create{{entity.pascalCase()}}Input input);
+  Future<{{entity.pascalCase()}}> create(Create{{entity.pascalCase()}}Input input);
 
   /// Fetches all {{entity.snakeCase()}}.
   Future<List<{{entity.pascalCase()}}Entity>> fetchMany();
