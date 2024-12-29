@@ -28,8 +28,11 @@ final class {{name.pascalCase()}}State extends SuperBlocState<{{error_class.pasc
   {{name.pascalCase()}}State copyWithError({{error_class.pascalCase()}} error) => {{name.pascalCase()}}State._(
         nullableProperty: nullableProperty,
         error: error,
-        status: status,
+        status: StateStatus.failure,
       );
+
+  @override
+  String toString() => '${{name.pascalCase()}} { status: $status }';
 
   @override
   List<Object?> get props => [nullableProperty, ...super.props];
