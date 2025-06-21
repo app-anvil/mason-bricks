@@ -1,0 +1,236 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+######## IOS CONFIGURATIONS
+# If you want to make the build automatically available to external groups,
+# add the name of the group to the array below, after "App Store Connect Users"
+# groups = ["External Tests group name"]
+workspace = "Runner.xcworkspace"
+project = "Runner.xcodeproj"
+
+# If you build for multiple environments, you might wanna set this specifically on build_app
+# lane_context is not available on CI
+configuration = ENV['CI'] ? "Release-#{ENV["ENVIRONMENT"]}" : "Release-#{lane_context[SharedValues::ENVIRONMENT]}"
+export_method = "app-store" # specify the export method
+key_id = ENV["APPSTORE_KEY_ID"] # The key id of the p8 file
+issuer_id = ENV["APPSTORE_ISSUER_ID"] # issuer id on appstore connect
+key_filepath = ENV["P8_FILE_PATH"] # The path to p8 file generated on appstore connect
+######## END IOS CONFIGURATIONS
+
+default_platform(:ios)
+
+platform :ios do
+
+  desc "Get the app version from pubspec.yaml"
+  def flutter_version
+    version_line = sh("grep '^version:' ../../pubspec.yaml").strip
+    version_line.split(':').last.strip
+  end
+
+  desc "Check environment variables"
+  def check_env_vars
+    required_vars = ["APPSTORE_KEY_ID", "APPSTORE_ISSUER_ID", "P8_FILE_PATH", "APP_ID"]
+    missing_vars = required_vars.select { |v| ENV[v].nil? || ENV[v].empty? }
+    unless missing_vars.empty?
+      UI.user_error!("Missing required ENV vars: #{missing_vars.join(', ')}")
+    end
+  end
+
+  desc "desc Build and archive the app"  
+  private_lane :flutter_build_and_archive do
+    envName = lane_context[SharedValues::ENVIRONMENT]
+    # we use not constant icon data
+    sh "fvm flutter build ios --no-codesign --no-tree-shake-icons --flavor #{envName} -t lib/main.dart"
+
+    gym(
+      workspace: workspace,
+      scheme: envName,
+      configuration: configuration,
+      export_options: {
+        signingStyle: "manual",
+        method: export_method,
+        compile_bitcode: true,
+        testFlightInternalTestingOnly: envName == "dev",
+        manageAppVersionAndBuildNumber: false,
+      }
+    )
+  end
+
+  desc "Prepare the app build"
+  lane :prepareBuild do
+    sh("echo Prepare the build for app with id: #{ENV['APP_ID']}")
+    sh("melos clean")
+    Dir.chdir("../../") do
+      sh("rm -f pubspec.lock")
+    end  
+    Dir.chdir("../") do
+      sh("rm -rf .symlinks")
+      sh("rm -rf Pods")
+      sh("rm -f Podfile.lock")
+      
+      sh("melos bs")
+      sh("melos generate")
+      # Uncomment the next line if you want to generate localization files
+      # sh("melos generate-l10n")
+      sh("melos format")
+      sh("fvm flutter precache --ios")
+      sh("pod install --repo-update")  
+    end
+  end
+
+  desc "Build the app"  
+  lane :build do
+    prepareBuild
+    version = flutter_version
+    UI.message("App version: #{version}")
+    # or ENV["APP_ID"] -> get the valur from the env
+    # CredentialsManager get the value from the Appfile
+    app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+    clear_derived_data
+
+    flutter_build_and_archive
+  end
+
+  desc "Push a new build to TestFlight"
+  lane :deploy do |options|
+    begin
+      check_env_vars
+      if options[:prepare_build]
+        prepareBuild
+      end  
+      
+      # or ENV["APP_ID"] -> get the valur from the env
+      # CredentialsManager get the value from the Appfile
+      app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+      api_key = app_store_connect_api_key(
+        key_id: key_id,
+        issuer_id: issuer_id,
+        key_filepath: key_filepath,
+        in_house: false
+      )
+
+      clear_derived_data
+      match(
+        type: 'appstore',
+        git_basic_authorization: ENV['MATCH_GIT_BASIC_AUTHORIZATION'],
+        # keychain_name: 'login.keychain',
+        # keychain_password: ENV['MATCH_KEYCHAIN_PASSWORD'],
+        api_key: api_key,
+        readonly: true,
+      )
+
+      flutter_build_and_archive
+
+      pilot(
+        api_key: api_key,
+        app_identifier: app_identifier,
+        skip_waiting_for_build_processing: true,
+        changelog: latest_changelog("CHANGELOG.md"),
+      )
+
+    ensure
+      # executed always, even if an error occurs
+      clean_build_artifacts
+    end  
+    
+  end
+
+  desc "Get the latest changelog entry"
+  def latest_changelog(path)
+    changelog = File.read(path)
+    # take the first section after the first "#"
+    latest_section = changelog.split("/^#\s*")[1]
+    return "" if latest_section.nil?
+
+    lines = latest_section.strip.lines
+    # remove the line with the version number
+    _, *body_lines = lines
+    body_lines.map(&:strip).join("\n")
+  end
+
+  # CI
+  desc "Check CI environment variables"
+  def check_env_vars_ci
+    required_vars = ["APPSTORE_KEY_ID", "APPSTORE_ISSUER_ID", "APP_STORE_CONNECT_P8_CONTENT_BASE64", "APP_ID"]
+    missing_vars = required_vars.select { |v| ENV[v].nil? || ENV[v].empty? }
+    unless missing_vars.empty?
+      UI.user_error!("Missing required ENV vars: #{missing_vars.join(', ')}")
+    end
+  end
+
+  desc "Build and archive the app for CI"
+  private_lane :flutter_build_and_archive_ci do
+    # Check if the environment variable is set
+    envName = ENV.fetch("ENVIRONMENT") do
+      UI.user_error!("ENVIRONMENT variable is not set")
+    end
+    
+    # we use not constant icon data
+    sh "flutter build ios --no-codesign --no-tree-shake-icons --flavor #{envName} -t lib/main.dart"
+    
+    configuration = "Release-#{envName}"
+    gym(
+      workspace: workspace,
+      scheme: envName,
+      configuration: configuration,
+      export_options: {
+        method: export_method,
+        compile_bitcode: true,
+        testFlightInternalTestingOnly: envName == "dev",
+        manageAppVersionAndBuildNumber: false,
+      }
+    )
+  end
+
+  desc "Push a new build to TestFlight with CI"
+  lane :deploy_ci do
+    begin
+
+      check_env_vars_ci  
+      # Automatically set up the CI variable
+      setup_ci if ENV['CI']
+
+      app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+      
+      api_key = app_store_connect_api_key(
+        key_id: key_id,
+        issuer_id: issuer_id,
+        key_content: ENV["APP_STORE_CONNECT_P8_CONTENT_BASE64"],
+        is_key_content_base64: true,
+        in_house: false
+      )
+
+      match(
+        type: 'appstore',
+        git_basic_authorization: ENV['MATCH_GIT_BASIC_AUTHORIZATION'],
+        # keychain_name: 'login.keychain',
+        # keychain_password: ENV['MATCH_KEYCHAIN_PASSWORD'],
+        api_key: api_key,
+        readonly: true,
+      )
+
+      flutter_build_and_archive_ci
+
+      # clear_derived_data
+
+      pilot(
+        api_key: api_key,
+        app_identifier: app_identifier,
+        skip_waiting_for_build_processing: true,
+        changelog: latest_changelog("CHANGELOG.md"),
+      )
+    ensure
+      # executed always, even if an error occurs
+      clean_build_artifacts
+    end 
+  end
+end

@@ -1,0 +1,142 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Clean the build artifacts"
+  def clean_build_artifacts
+    sh("rm -rf ../build")
+  end
+
+  desc "Runs all the tests"
+  lane :test do
+    gradle(task: "test")
+  end
+  
+  desc "Prepare the app build"
+  lane :prepareBuild do
+    sh("echo Prepare the build or env: #{lane_context[SharedValues::ENVIRONMENT]} with package name: #{ENV['PACKAGE_NAME']}")
+    sh("melos clean")
+    sh("melos bs")
+    sh("melos generate")
+    # Uncomment the next line if you want to generate localization files
+    # sh("melos generate-l10n")
+    sh("melos format")
+  end
+
+  desc "Generate app bundle"
+  lane :buildBundle do
+    versionName = flutter_version()["version_name"]
+    versionCode = flutter_version()["version_code"]
+    releaseName = "#{versionCode} (#{versionName})"
+    UI.message("App version: #{releaseName}")
+
+    envName = lane_context[SharedValues::ENVIRONMENT]
+    sh "fvm flutter build appbundle --no-tree-shake-icons --flavor #{envName} -t lib/main.dart"
+  end
+
+  desc "Deploy a new version to the Google Play"
+  lane :deploy do |options|
+    begin 
+      if options[:prepare_build]
+        prepareBuild
+      end
+      buildBundle
+      versionName = flutter_version()["version_name"]
+      versionCode = flutter_version()["version_code"]
+      envName = lane_context[SharedValues::ENVIRONMENT]
+      releaseName = "#{versionCode} (#{versionName})"
+
+      baseLibPath = "build/app/intermediates/merged_native_libs/#{envName}Release/merge#{envName}ReleaseNativeLibs/out/lib"  
+
+      baseLibPath1 = "build/app/intermediates/merged_native_libs/#{envName}Release/merge#{envName}ReleaseNativeLibs/out/lib"
+      baseLibPath2 = "build/app/intermediates/merged_native_libs/#{envName}Release/out/lib"
+
+      symbolsDir = "./../../#{baseLibPath1}"
+
+      zipFileName = "native-debug-symbols.zip"
+      
+      usedBaseLibPath = baseLibPath1
+
+      unless Dir.exist?(symbolsDir)
+        UI.message("Directory #{symbolsDir} not found, try with the other...")
+        symbolsDir = File.expand_path("./../../#{baseLibPath2}")
+        usedBaseLibPath = baseLibPath2
+        unless Dir.exist?(symbolsDir)
+          UI.user_error!("Error: directory symbolsDir does not exist!")
+        end
+      end
+
+      
+      Dir.chdir("#{symbolsDir}") do 
+        sh("rm -f .DS_Store")
+        sh("zip -r #{zipFileName} .")
+      end
+      
+      upload_to_play_store(
+        package_name: ENV['PACKAGE_NAME'],
+        aab: "../build/app/outputs/bundle/#{envName}Release/app-#{envName}-release.aab",
+        version_name: releaseName,
+        metadata_path: "./fastlane/#{envName}/metadata/android",
+        track: "internal",
+        release_status: "draft", # "completed", # only supported after the first manual release
+        skip_upload_images: true,
+        skip_upload_screenshots: true,
+        # mappig file is used to deobfuscate the stack trace of the exceptions
+        mapping_paths: ["../#{usedBaseLibPath}/#{zipFileName}", "../build/app/outputs/mapping/#{envName}Release/mapping.txt"]
+      )
+    ensure 
+      clean_build_artifacts
+    end  
+    
+  end
+
+  # CI
+  desc "Deploy a new version to the Google Play with CI"
+  lane :deploy_ci do |options|
+    begin 
+      versionName = flutter_version()["version_name"]
+      versionCode = flutter_version()["version_code"]
+      envName = ENV.fetch("ENVIRONMENT")
+      releaseName = "#{versionCode} (#{versionName})"
+
+      aab_path = options[:aab_path]
+      mappingPath = options[:mapping_path]
+      symbolsZipPath = options[:symbols_zip_path]
+      
+      upload_to_play_store(
+        package_name: ENV['PACKAGE_NAME'],
+        json_key: ENV['JSON_KEY_FILE_PATH'],
+        aab: "../build/app/outputs/bundle/#{envName}Release/app-#{envName}-release.aab",
+        version_name: releaseName,
+        metadata_path: "./fastlane/#{envName}/metadata/android",
+        track: "internal",
+        release_status: "draft", # "completed", # only supported after the first manual release
+        skip_upload_images: true,
+        skip_upload_screenshots: true,
+        # mappig file is used to deobfuscate the stack trace of the exceptions
+        mapping_paths: [
+          symbolsZipPath,
+          mappingPath
+        ]
+      )
+    ensure 
+      clean_build_artifacts
+    end  
+    
+  end
+
+end
