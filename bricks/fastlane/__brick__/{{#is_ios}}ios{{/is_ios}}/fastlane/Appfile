@@ -1,0 +1,5 @@
+app_identifier(ENV["APP_ID"]) # The bundle identifier of your app
+apple_id(ENV["APPLE_ID"]) # Your Apple Developer Portal username
+
+itc_team_id(ENV["ITC_TEAM_ID"]) # Your App Store Connect team ID
+team_id(ENV["TEAM_ID"]) # Developer Portal team ID - see https://github.com/fastlane/fastlane/issues/4301#issuecomment-253461017
